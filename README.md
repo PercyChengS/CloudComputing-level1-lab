@@ -96,12 +96,42 @@
 
 2. **上傳圖片**
    - 使用以下任一方法將 `photo.jpg` 傳輸至 VM 的 `/var/www/html/images/` 目錄：
-     - **SCP 指令**：
-       ```bash
-       scp photo.jpg username@192.168.1.100:/var/www/html/images/
-       ```
-     - **FTP 軟體**（如 FileZilla）
-     - **虛擬機拖曳功能**
+
+   - **SCP 指令（建議）**：
+
+     **基本語法**
+     ```
+     scp [選項] <來源檔案> <使用者名稱>@<VM_IP>:<目標路徑>
+     ```
+
+     **常用選項**
+
+     | 選項 | 說明 |
+     |------|------|
+     | `-P <port>` | 指定 SSH 連接埠（預設為 22，注意為大寫 P） |
+     | `-i <金鑰路徑>` | 使用指定的 SSH 私鑰進行驗證（Key-based auth） |
+     | `-r` | 遞迴複製整個資料夾 |
+     | `-v` | 顯示詳細傳輸過程（用於除錯） |
+
+     **範例指令**
+     ```bash
+     # 基本用法（預設 Port 22，密碼驗證）
+     scp photo.jpg username@192.168.1.100:/var/www/html/images/
+
+     # 指定自訂連接埠（例如 Port 2222）
+     scp -P 2222 photo.jpg username@192.168.1.100:/var/www/html/images/
+
+     # 使用 SSH 私鑰驗證
+     scp -i ~/.ssh/id_rsa photo.jpg username@192.168.1.100:/var/www/html/images/
+
+     # 遞迴上傳整個資料夾
+     scp -r my_website/ username@192.168.1.100:/var/www/html/
+     ```
+
+     > ⚠️ **注意**：`scp` 預設使用 SSH Port **22**。若 VM 的 SSH 服務監聽於其他埠號，必須加上 `-P` 指定。
+
+   - **FTP 軟體**（如 FileZilla）
+   - **虛擬機拖曳功能**
 
 3. **驗證數據上雲**
    - 在本地端瀏覽器輸入：`http://192.168.1.100/images/photo.jpg`
@@ -144,87 +174,5 @@
    ⚠️ 注意：HTML 和圖片放在同一台伺服器上，路徑改回相對路徑
 
 2. **上傳 HTML 檔案到雲端**
-   ```bash
-   scp index.html username@192.168.1.100:/var/www/html/
-   ```
-   或使用 FTP 軟體上傳（將覆蓋 Apache 原本預設的 index 檔案）
 
-3. **階段二測試**
-   - 關閉本地端的 `index.html` 檔案
-   - 在本地端瀏覽器網址列輸入：`http://192.168.1.100/`
-   - ✅ 確認網頁文字與圖片皆成功顯示
-
-4. **最終確認**
-   - 網站數據與應用程式已完全遷移至 Ubuntu VM（雲端環境）
-   - 本地端電腦的原始資料夾可刪除
-
----
-
-## 📁 檔案結構
-
-```
-CloudComputing-level1-lab/
-├── README.md              # 本文件
-├── stage-0/
-│   ├── index.html         # 階段零：本地網站
-│   └── photo.jpg          # 測試圖片
-├── stage-1/
-│   └── index.html         # 階段一：修改圖片路徑指向雲端
-└── stage-2/
-    └── index.html         # 階段二：完全雲端化
-```
-
----
-
-## 🔑 關鍵概念
-
-| 概念 | 說明 |
-|------|------|
-| **On-premises** | 在本地端伺服器上運行應用程式和存儲資料 |
-| **Cloud Server** | 在遠端雲端伺服器上運行應用程式和存儲資料 |
-| **混合架構** | 部分資源在本地端，部分在雲端 |
-| **數據遷移** | 將資料從本地轉移到雲端 |
-| **應用程式遷移** | 將應用程式從本地轉移到雲端 |
-
----
-
-## 💡 學習要點
-
-✅ 理解本地端 vs 雲端的差異  
-✅ 掌握漸進式遷移策略  
-✅ 學習混合架構的設計  
-✅ 熟悉 Apache 網頁伺服器的基本操作  
-✅ 練習檔案傳輸技能（SCP、FTP 等）  
-
----
-
-## 🎯 常見問題 (FAQ)
-
-**Q: 如何知道 VM 的 IP 位址？**  
-A: 在 VM 終端機執行 `ip a` 或 `hostname -I`
-
-**Q: 無法 ping 通 VM，怎麼辦？**  
-A: 檢查虛擬機設定，確保網路設定為「橋接模式 (Bridged)」或「NAT」
-
-**Q: 如何使用 SCP 上傳檔案？**  
-A: 在本地端終端機執行：`scp 檔案名 username@VM_IP:/目標路徑/`
-
-**Q: 階段一和階段二的差異是什麼？**  
-A: 階段一只遷移資料，應用程式仍在本地；階段二將應用程式也遷移到雲端
-
----
-
-## 📚 相關資源
-
-- [Apache HTTP Server](https://httpd.apache.org/)
-- [Ubuntu 伺服器文件](https://ubuntu.com/server)
-- [SCP 指令教學](https://linux.die.net/man/1/scp)
-
----
-
-## 📄 授權
-
-此項目用於教育目的。
-
-**建立日期**: 2026年  
-**實驗等級**: Level 1 (入門)
+   **基本語法**
